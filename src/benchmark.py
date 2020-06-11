@@ -10,11 +10,14 @@ from cec2013single.cec2013 import Benchmark
 import numpy as np
 
 
-# 1 3 8 9 15 21 25
+# 1 3 8 9 15 20 21 22 25
 class TestBenchmark(Benchmark):
     def exec_function(self, fn_number, argument_vector):
         arg_np = np.array(argument_vector)
         return self.get_function(fn_number)(arg_np)
+
+    def lambda_function(self, fn_number):
+        return lambda *args: self.exec_function(fn_number, *args)
 
     # unimodal
     def sphere(self, argument_vector):

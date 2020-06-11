@@ -95,5 +95,4 @@ def pso(dimension, fitness_function, min_bound, max_bound,
         (neighbors_best_scores,
          neighbors_best_positions) = compute_neightbors(neighbors, best_scores,
                                                         best_positions)
-    print(best_scores)
     return best_score_swarm, best_positions[best_scores.argmin()]

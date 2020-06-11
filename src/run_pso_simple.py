@@ -6,15 +6,19 @@
 
 # author: JackRed <jackred@tuta.io>
 
+import sys
 import pso_simple as pso
 import pso_simple_functions as pso_functions
 from benchmark import TestBenchmark
 
 bench = TestBenchmark()
 
-dimension = 50
-fn_number = 21
-fitness_function = bench.composite_f1
+if len(sys.argv) != 3:
+    exit("need 2 arguments: run_pso_simple.py dim fn_num")
+
+dimension = int(sys.argv[1])
+fn_number = int(sys.argv[2])
+fitness_function = bench.lambda_function(fn_number)
 info = bench.get_info(fn_number)
 lower = info["lower"]
 upper = info["upper"]
@@ -25,11 +29,16 @@ init_particle = pso.make_init_particle(pso_functions.init_position,
                                        pso_functions.init_velocity_2011)
 move = pso_functions.move_2011
 
-max_iter = 10000*dimension
+max_iter = 13500*dimension
 n_particle = 40
 
-score, position = pso.pso(dimension, fitness_function, lower, upper,
-                          velocity_function, move,
-                          form_neighborhood, init_particle,
-                          max_iter, n_particle)
-print("best", score, "at", position)
+res = []
+print("function %d in dimension %d" % (fn_number, dimension))
+for i in range(10):
+    score, position = pso.pso(dimension, fitness_function, lower, upper,
+                              velocity_function, move,
+                              form_neighborhood, init_particle,
+                              max_iter, n_particle)
+    print("i->", i, ": best", score, "at", position)
+    res.append(score)
+print("average: ", sum(res) / len(res))
