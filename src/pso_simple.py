@@ -67,7 +67,8 @@ def pso(dimension, fitness_function, min_bound, max_bound,
      neighbors_best_positions) = form_neighborhood(best_scores, best_positions,
                                                    dimension)
     best_score_swarm = min(best_scores)
-    for i in range(max_iter):
+    i = 0
+    while i < max_iter and best_score_swarm > 1e-08:
         print("%d / %d      " % (i, max_iter), end="\r")
         inertia = inertia_start - (inertia_start - inertia_end) / max_iter * i
         for idx in range(n_particle):
@@ -95,4 +96,5 @@ def pso(dimension, fitness_function, min_bound, max_bound,
         (neighbors_best_scores,
          neighbors_best_positions) = compute_neightbors(neighbors, best_scores,
                                                         best_positions)
+        i += 1
     return best_score_swarm, best_positions[best_scores.argmin()]
