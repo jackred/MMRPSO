@@ -84,7 +84,7 @@ def pso(dimension, fitness_function, min_bound, max_bound,
             if scores[idx] < best_scores[idx]:
                 best_scores[idx] = scores[idx]
                 best_positions[idx] = positions[idx]
-                tmp_min = min(best_scores)
+        tmp_min = min(best_scores)
         if tmp_min < best_score_swarm:
             best_score_swarm = tmp_min
             # (neighbors,
