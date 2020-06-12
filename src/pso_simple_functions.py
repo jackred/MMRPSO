@@ -33,6 +33,20 @@ def init_velocity_2007(dimension, min_bound, max_bound, position):
     return res
 
 
+def move_2007(position, velocity, min_bound, max_bound):
+    tmp = position + velocity
+    for i in range(len(tmp)):
+        if tmp[i] < min_bound:
+            position[i] = min_bound
+            velocity[i] *= 0.0
+        elif tmp[i] > max_bound:
+            position[i] = max_bound
+            velocity[i] *= 0.0
+        else:
+            position[i] = tmp[i]
+    return position, velocity
+
+
 # PSO 2011
 
 def gravity_center_equation(dimension, position,
@@ -94,6 +108,7 @@ def move_2011(position, velocity, min_bound, max_bound):
         else:
             position[i] = tmp[i]
     return position, velocity
+
 
 # PSO
 
