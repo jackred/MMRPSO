@@ -16,13 +16,19 @@ from math import sqrt, ceil, floor
 def velocity_2007(dimension, min_bound, max_bound,
                   cognitive_trust, social_trust, inertia,
                   position, velocity, best_position, neighbors_best_position):
+    isSameBestAsPosition = (best_position == position).all()
     res = np.empty(dimension)
     for i in range(dimension):
-        res[i] = (inertia * velocity[i]
-                  + np.random.uniform(0, 1) * cognitive_trust
-                  * (best_position[i] - position[i])
-                  + np.random.uniform(0, 1) * social_trust
-                  * (neighbors_best_position[i] - position[i]))
+        if isSameBestAsPosition:
+            res[i] = (inertia * velocity[i]
+                      + np.random.uniform(0, 1) * cognitive_trust
+                      * (best_position[i] - position[i]))
+        else:
+            res[i] = (inertia * velocity[i]
+                      + np.random.uniform(0, 1) * cognitive_trust
+                      * (best_position[i] - position[i])
+                      + np.random.uniform(0, 1) * social_trust
+                      * (neighbors_best_position[i] - position[i]))
     return res
 
 
@@ -52,15 +58,19 @@ def move_2007(position, velocity, min_bound, max_bound):
 def gravity_center_equation(dimension, position,
                             best_position, neighbors_best_position,
                             cognitive_trust, social_trust):
+    isSameBestAsPosition = (best_position == position).all()
     res = np.empty(dimension)
     for i in range(dimension):
         pi = position[i] \
             + cognitive_trust * np.random.uniform(0, 1) \
             * (best_position[i] - position[i])
-        li = position[i] \
-            + social_trust * np.random.uniform(0, 1) \
-            * (neighbors_best_position[i] - position[i])
-        res[i] = (position[i] + pi + li) / 3
+        if isSameBestAsPosition:
+            res[i] = (position[i] + pi) / 2
+        else:
+            li = position[i] \
+                + social_trust * np.random.uniform(0, 1) \
+                * (neighbors_best_position[i] - position[i])
+            res[i] = (position[i] + pi + li) / 3
     return res
 
 
