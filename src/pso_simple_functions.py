@@ -101,10 +101,10 @@ def move_2011(position, velocity, min_bound, max_bound):
     for i in range(len(tmp)):
         if tmp[i] < min_bound:
             position[i] = min_bound
-            velocity[i] *= 0.5
+            velocity[i] *= -0.5
         elif tmp[i] > max_bound:
             position[i] = max_bound
-            velocity[i] *= 0.5
+            velocity[i] *= -0.5
         else:
             position[i] = tmp[i]
     return position, velocity
