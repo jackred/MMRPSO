@@ -62,8 +62,9 @@ def move_2007(position, velocity, min_bound, max_bound):
 
 def gravity_center_equation(dimension, position,
                             best_position, neighbors_best_position,
-                            cognitive_trust, social_trust):
-    is_same_best_as_pos = (best_position == position).all()
+                            cognitive_trust, social_trust,
+                            ignore_same):
+    is_same_best_as_pos = ignore_same and (best_position == position).all()
     res = np.empty(dimension)
     for i in range(dimension):
         pi = position[i] \
@@ -93,15 +94,21 @@ def generate_point_in_sphere(g, position, dimension):
 
 def velocity_2011(dimension, min_bound, max_bound,
                   cognitive_trust, social_trust, inertia,
-                  position, velocity, best_position, neighbors_best_position):
+                  position, velocity, best_position, neighbors_best_position,
+                  ignore_same=False):
     g = gravity_center_equation(dimension, position, best_position,
                                 neighbors_best_position,
-                                cognitive_trust, social_trust)
+                                cognitive_trust, social_trust,
+                                ignore_same)
     position_prime = generate_point_in_sphere(g, position, dimension)
     res = np.empty(dimension)
     for i in range(dimension):
         res[i] = inertia * velocity[i] + position_prime[i] - position[i]
     return res
+
+
+def velocity_2011_ignore(*args):
+    return velocity_2007(*args, ignore_same=True)
 
 
 def init_velocity_2011(dimension, min_bound, max_bound, position):
@@ -162,6 +169,10 @@ def form_neighborhood_ring(n_neighbor, best_scores, best_positions, dimension):
 
 def ring_2(*args):
     return form_neighborhood_ring(2, *args)
+
+
+def make_ring(nb):
+    return lambda *args: form_neighborhood_ring(nb, *args)
 
 
 def form_neighborhood_dense(best_scores, best_positions):

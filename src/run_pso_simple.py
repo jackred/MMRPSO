@@ -20,17 +20,20 @@ def round8(a):
 
 bench = TestBenchmark()
 
-if len(sys.argv) != 3:
-    exit("need 2 arguments: run_pso_simple.py dim fn_num")
+if len(sys.argv) != 4:
+    exit("need 3 arguments: run_pso_simple.py dim fn_num ignore_same")
 
 dimension = int(sys.argv[1])
 fn_number = int(sys.argv[2])
+ignore_same = bool(int(sys.argv[3]))
 fitness_function = bench.lambda_function(fn_number)
 info = bench.get_info(fn_number)
 lower = info["lower"]
 upper = info["upper"]
 
-velocity_function = pso_functions.velocity_2011
+velocity_function = pso_functions.velocity_2011_ignore if ignore_same \
+    else pso_functions.velocity_2011
+print(velocity_function)
 form_neighborhood = pso_functions.ring_2
 init_particle = make_init_particle(pso_functions.init_position,
                                    pso_functions.init_velocity_2011)
@@ -65,4 +68,4 @@ print("median", res[len(res)//2])
 print("average: ", average)
 print("std", sqrt((1/(len(res) - 1)) * sum([(i - average) ** 2for i in res])))
 print("function %d in dimension %d" % (fn_number, dimension))
-print("pso 2011")
+print("pso 2011, ignore same: %r" % ignore_same)

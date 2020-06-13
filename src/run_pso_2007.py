@@ -33,7 +33,7 @@ upper = info["upper"]
 
 velocity_function = pso_functions.velocity_2007_ignore if ignore_same \
     else pso_functions.velocity_2007
-form_neighborhood = pso_functions.ring_2
+form_neighborhood = pso_functions.make_ring(4)
 init_particle = make_init_particle(pso_functions.init_position,
                                    pso_functions.init_velocity_2007)
 move = pso_functions.move_2007
