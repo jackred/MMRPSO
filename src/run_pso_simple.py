@@ -10,6 +10,7 @@ import sys
 from math import sqrt
 import pso_simple as pso
 import pso_simple_functions as pso_functions
+from pso_utility_functions import make_init_particle
 from benchmark import TestBenchmark
 
 
@@ -31,8 +32,8 @@ upper = info["upper"]
 
 velocity_function = pso_functions.velocity_2011
 form_neighborhood = pso_functions.ring_2
-init_particle = pso.make_init_particle(pso_functions.init_position,
-                                       pso_functions.init_velocity_2011)
+init_particle = make_init_particle(pso_functions.init_position,
+                                   pso_functions.init_velocity_2011)
 move = pso_functions.move_2011
 
 max_iter = 10000*dimension
@@ -64,3 +65,4 @@ print("median", res[len(res)//2])
 print("average: ", average)
 print("std", sqrt((1/(len(res) - 1)) * sum([(i - average) ** 2for i in res])))
 print("function %d in dimension %d" % (fn_number, dimension))
+print("pso 2011")

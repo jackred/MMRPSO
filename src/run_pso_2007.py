@@ -10,6 +10,7 @@ import sys
 from math import sqrt
 import pso_simple as pso
 import pso_simple_functions as pso_functions
+from pso_utility_functions import make_init_particle
 from benchmark import TestBenchmark
 
 
@@ -19,20 +20,23 @@ def round8(a):
 
 bench = TestBenchmark()
 
-if len(sys.argv) != 3:
-    exit("need 2 arguments: run_pso_simple.py dim fn_num")
+if len(sys.argv) != 4:
+    exit("need 3 arguments: run_pso_simple.py dim fn_num ignore_same")
 
 dimension = int(sys.argv[1])
 fn_number = int(sys.argv[2])
+ignore_same = bool(int(sys.argv[3]))
+print(ignore_same)
 fitness_function = bench.lambda_function(fn_number)
 info = bench.get_info(fn_number)
 lower = info["lower"]
 upper = info["upper"]
 
-velocity_function = pso_functions.velocity_2007
+velocity_function = pso_functions.velocity_2007_ignore if ignore_same \
+    else pso_functions.velocity_2007
 form_neighborhood = pso_functions.ring_2
-init_particle = pso.make_init_particle(pso_functions.init_position,
-                                       pso_functions.init_velocity_2007)
+init_particle = make_init_particle(pso_functions.init_position,
+                                   pso_functions.init_velocity_2007)
 move = pso_functions.move_2007
 
 max_iter = 10000*dimension
@@ -48,6 +52,7 @@ elif dimension in [30, 50]:
 elif dimension == 100:
     nb = 10
 
+nb = 4
 print("%s runs" % nb)
 for i in range(nb):
     score, position = pso.pso(dimension, fitness_function, lower, upper,
@@ -64,3 +69,4 @@ print("median", res[len(res)//2])
 print("average: ", average)
 print("std", sqrt((1/(len(res) - 1)) * sum([(i - average) ** 2for i in res])))
 print("function %d in dimension %d" % (fn_number, dimension))
+print("pso 2007, ignore same: %r" % ignore_same)

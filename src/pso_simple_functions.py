@@ -15,11 +15,12 @@ from math import sqrt, ceil, floor
 
 def velocity_2007(dimension, min_bound, max_bound,
                   cognitive_trust, social_trust, inertia,
-                  position, velocity, best_position, neighbors_best_position):
-    isSameBestAsPosition = (best_position == position).all()
+                  position, velocity, best_position, neighbors_best_position,
+                  ignore_same=False):
+    is_same_best_as_pos = ignore_same and (best_position == position).all()
     res = np.empty(dimension)
     for i in range(dimension):
-        if isSameBestAsPosition:
+        if is_same_best_as_pos:
             res[i] = (inertia * velocity[i]
                       + np.random.uniform(0, 1) * cognitive_trust
                       * (best_position[i] - position[i]))
@@ -30,6 +31,10 @@ def velocity_2007(dimension, min_bound, max_bound,
                       + np.random.uniform(0, 1) * social_trust
                       * (neighbors_best_position[i] - position[i]))
     return res
+
+
+def velocity_2007_ignore(*args):
+    return velocity_2007(*args, ignore_same=True)
 
 
 def init_velocity_2007(dimension, min_bound, max_bound, position):
@@ -58,13 +63,13 @@ def move_2007(position, velocity, min_bound, max_bound):
 def gravity_center_equation(dimension, position,
                             best_position, neighbors_best_position,
                             cognitive_trust, social_trust):
-    isSameBestAsPosition = (best_position == position).all()
+    is_same_best_as_pos = (best_position == position).all()
     res = np.empty(dimension)
     for i in range(dimension):
         pi = position[i] \
             + cognitive_trust * np.random.uniform(0, 1) \
             * (best_position[i] - position[i])
-        if isSameBestAsPosition:
+        if is_same_best_as_pos:
             res[i] = (position[i] + pi) / 2
         else:
             li = position[i] \
