@@ -26,7 +26,6 @@ if len(sys.argv) != 4:
 dimension = int(sys.argv[1])
 fn_number = int(sys.argv[2])
 ignore_same = bool(int(sys.argv[3]))
-print(ignore_same)
 fitness_function = bench.lambda_function(fn_number)
 info = bench.get_info(fn_number)
 lower = info["lower"]
@@ -52,7 +51,6 @@ elif dimension in [30, 50]:
 elif dimension == 100:
     nb = 10
 
-nb = 4
 print("%s runs" % nb)
 for i in range(nb):
     score, position = pso.pso(dimension, fitness_function, lower, upper,
