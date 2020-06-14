@@ -20,12 +20,15 @@ def round8(a):
 
 bench = TestBenchmark()
 
-if len(sys.argv) != 4:
-    exit("need 3 arguments: run_pso_simple.py dim fn_num ignore_same")
+if len(sys.argv) != 5:
+    exit("need 4 arguments: run_pso_simple.py dim fn_num ignore_same"
+         + "nb_neighbor")
 
 dimension = int(sys.argv[1])
 fn_number = int(sys.argv[2])
 ignore_same = bool(int(sys.argv[3]))
+nb_neighbor = int(sys.argv[4])
+
 fitness_function = bench.lambda_function(fn_number)
 info = bench.get_info(fn_number)
 lower = info["lower"]
@@ -34,7 +37,7 @@ upper = info["upper"]
 velocity_function = pso_functions.velocity_2011_ignore if ignore_same \
     else pso_functions.velocity_2011
 print(velocity_function)
-form_neighborhood = pso_functions.ring_2
+form_neighborhood = pso_functions.make_ring(nb_neighbor)
 init_particle = make_init_particle(pso_functions.init_position,
                                    pso_functions.init_velocity_2011)
 move = pso_functions.move_2011
