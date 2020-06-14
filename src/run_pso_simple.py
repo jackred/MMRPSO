@@ -60,7 +60,8 @@ for i in range(nb):
     score, position = pso.pso(dimension, fitness_function, lower, upper,
                               velocity_function, move,
                               form_neighborhood, init_particle,
-                              max_iter, n_particle)
+                              max_iter, n_particle,
+                              inertia_start=0.7, inertia_end=0.7)
     print("i->", i, ": best", round8(score), "at", position)
     res.append(round8(score))
 res.sort()
