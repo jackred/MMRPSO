@@ -49,7 +49,7 @@ def pso(dimension, fitness_function, min_bound, max_bound,
                                                   min_bound, max_bound)
             scores[idx] = fitness_function(positions[idx])
         for idx in range(n_particle):
-            if scores[idx] < best_scores[idx]:
+            if scores[idx] <= best_scores[idx]:
                 best_scores[idx] = scores[idx]
                 best_positions[idx] = positions[idx]
         tmp_min = min(best_scores)
