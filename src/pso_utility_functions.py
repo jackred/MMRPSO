@@ -8,13 +8,13 @@
 import numpy as np
 
 
-def compute_neightbors(neighbors, best_scores, best_positions):
+def compute_neightbors(neighbors, best_scores, best_positions, f=np.argmin):
     n_particle = len(best_scores)
     res_scores = np.empty(n_particle)
     res_positions = np.empty(shape=(n_particle, len(best_positions[0])))
     for i in range(n_particle):
         tmp = best_scores[neighbors[i]]
-        idx = tmp.argmin()
+        idx = f(tmp)
         res_scores[i] = tmp[idx]
         res_positions[i] = best_positions[neighbors[i]][idx]
     return res_scores, res_positions
