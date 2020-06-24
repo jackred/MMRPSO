@@ -203,3 +203,7 @@ def form_neighborhood_cluster(cluster_size, best_scores, best_positions,
         neighbors_best_scores[tmp_range] = tmp_score
         neighbors_best_positions[tmp_range] = tmp_pos
     return (neighbors, neighbors_best_scores, neighbors_best_positions)
+
+
+def form_cluster_8(*args):
+    return form_neighborhood_cluster(8, *args)
