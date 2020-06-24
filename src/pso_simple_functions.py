@@ -184,3 +184,22 @@ def form_neighborhood_dense(best_scores, best_positions, dimension):
     neighbors_best_scores = np.full(n_particle, best_scores[idx])
     return (neighbors, neighbors_best_scores, neighbors_best_positions)
 
+
+def form_neighborhood_cluster(cluster_size, best_scores, best_positions,
+                              dimension):
+    n_particle = len(best_scores)
+    neighbors = np.empty(shape=(n_particle, cluster_size), dtype=int)
+    neighbors_best_scores = np.empty(n_particle)
+    neighbors_best_positions = np.empty(shape=(n_particle, dimension))
+    for i in range(n_particle // cluster_size):
+        tmp_range = range(i*cluster_size, (i+1) * cluster_size)
+        (tmp_n,
+         tmp_score,
+         tmp_pos) = form_neighborhood_dense(best_scores[tmp_range],
+                                            best_positions[tmp_range],
+                                            dimension)
+        tmp_n += (i * cluster_size)
+        neighbors[tmp_range] = tmp_n
+        neighbors_best_scores[tmp_range] = tmp_score
+        neighbors_best_positions[tmp_range] = tmp_pos
+    return (neighbors, neighbors_best_scores, neighbors_best_positions)
