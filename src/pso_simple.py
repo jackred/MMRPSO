@@ -36,6 +36,8 @@ def pso(dimension, fitness_function, min_bound, max_bound,
     i = 0
     while i < max_iter and best_score_swarm > 1e-08:
         print("%d / %d      " % (i, max_iter), end="\r")
+        if i % 200 == 0:
+            print(i, "->", "b", best_score_swarm, best_positions[best_scores.argmin()])
         inertia = inertia_start - (inertia_start - inertia_end) / max_iter * i
         for idx in range(n_particle):
             velocitys[idx] = velocity_function(dimension, min_bound, max_bound,
