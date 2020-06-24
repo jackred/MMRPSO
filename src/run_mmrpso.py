@@ -23,26 +23,26 @@ bench = TestBenchmark()
 
 if len(sys.argv) != 4:
     exit("need 3 arguments: run_mmrpso.py dim fn_num"
-         + "nb_neighbor")
+         + "cluster_size")
 
 dimension = int(sys.argv[1])
 fn_number = int(sys.argv[2])
-nb_neighbor = int(sys.argv[3])
+cluster_size = int(sys.argv[3])
 
 fitness_function = bench.lambda_function(fn_number)
 info = bench.get_info(fn_number)
 lower = info["lower"]
 upper = info["upper"]
 
-velocity_function = mmrpso_functions.velocity
-velocity_function_w = mmrpso_functions.velocity_w
-form_neighborhood = pso_functions.make_ring(nb_neighbor)
+velocity_function = mmrpso_functions.velocity_both
+form_neighborhood = pso_functions.form_cluster_8
 init_particle = make_init_particle(pso_functions.init_position,
                                    pso_functions.init_velocity_2011)
 move = pso_functions.move_2011
+form_worst = mmrpso_functions.form_5_3
 
 max_iter = 10000*dimension
-n_particle = 20
+n_particle = 80
 
 res = []
 print("function %d in dimension %d" % (fn_number, dimension))
@@ -56,13 +56,14 @@ elif dimension == 100:
 
 print("%s runs" % nb)
 for i in range(nb):
-    (score, position,
-     w_score, w_pos) = mmrpso.mmrpso(dimension, fitness_function, lower, upper,
-                                     velocity_function, velocity_function_w,
-                                     move, form_neighborhood, init_particle,
-                                     max_iter, n_particle,
-                                     inertia_start=0.7, inertia_end=0.7,
-                                     worst_c_val=0.0002, worst_s_val=0.0002)
+    score, position = mmrpso.mmrpso(dimension, fitness_function, lower, upper,
+                                    velocity_function,
+                                    move, form_neighborhood, init_particle,
+                                    form_worst,
+                                    max_iter, n_particle,
+                                    inertia_start=0.7, inertia_end=0.7,
+                                    # worst_c_val=0.0002,
+                                    worst_s_val=0.0)
     print("i->", i, ": best", round8(score), "at", position)
     res.append(round8(score))
 res.sort()

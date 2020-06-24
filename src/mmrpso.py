@@ -8,6 +8,7 @@
 
 import numpy as np
 from pso_utility_functions import compute_neightbors
+import visualize
 
 INERTIA_START = 0.9
 INERTIA_END = 0.4
@@ -15,87 +16,76 @@ COGNITIVE_TRUST = 2
 SOCIAL_TRUST = 2
 
 
+# non optimized number of operation
+# example: computation of the worst_positions, should be in form neighbor and
+# compute_neightbors
+# optimized iff result are nice
 def mmrpso(dim, fitness_function, min_bound, max_bound,
-           velocity_function, velocity_function_w, move,
-           form_neighbor, init_particle,
+           velocity_function, move,
+           form_neighbor, init_particle, form_worst,
            max_iter, n_particle,
            cog_val=COGNITIVE_TRUST, soc_val=SOCIAL_TRUST,
-           worst_c_val=COGNITIVE_TRUST, worst_s_val=SOCIAL_TRUST,
+           # worst_c_val=COGNITIVE_TRUST,
+           worst_s_val=SOCIAL_TRUST,
            inertia_start=INERTIA_START, inertia_end=INERTIA_END):
-    (pos_opti,
-     velo_opti,
-     scores_opti,
+    (positions,
+     velocitys,
+     scores,
      best_scores,
-     best_pos) = init_particle(n_particle, dim, fitness_function,
-                               min_bound, max_bound)
-    (pos_worst,
-     velo_worst,
-     scores_worst,
-     worst_scores,
-     worst_pos) = init_particle(n_particle, dim, fitness_function,
-                                min_bound, max_bound)
-    (neighbors_opti,
+     best_positions) = init_particle(n_particle,
+                                     dim,
+                                     fitness_function,
+                                     min_bound, max_bound)
+    (neighbors,
      neighbors_best_scores,
-     neighbors_best_pos) = form_neighbor(best_scores, best_pos, dim)
-    (neighbors_worst,
-     neighbors_worst_scores,
-     neighbors_worst_pos) = form_neighbor(worst_scores, worst_pos, dim)
+     neighbors_best_positions) = form_neighbor(best_scores, best_positions,
+                                               dim)
+    worst_positions = np.array([
+        positions[neighbors[i]][scores[neighbors[i]].argmax()]
+        for i in range(n_particle)
+    ])
+    worst_array = form_worst(n_particle)
     best_score_swarm = min(best_scores)
-    worst_score_swarm = max(worst_scores)
     i = 0
     while i < max_iter and best_score_swarm > 1e-08:
-        print("%d / %d        " % (i, max_iter),  end="\r")
+        print("%d / %d      " % (i, max_iter), end="\r")
         if i % 200 == 0:
-            print(i, "->", "b", best_score_swarm, best_pos[best_scores.argmin()],
-                  "w", worst_score_swarm, worst_pos[worst_scores.argmax()])
+            print(i, "-aaa>", "b", best_score_swarm, best_positions[best_scores.argmin()])
+        visualize.plot_data(positions, worst_array, min_bound, max_bound)
         inertia = inertia_start - (inertia_start - inertia_end) / max_iter * i
         for idx in range(n_particle):
-            velo_worst[idx] = velocity_function_w(dim, min_bound, max_bound,
-                                                  cog_val, soc_val,
-                                                  inertia,
-                                                  pos_worst[idx],
-                                                  velo_worst[idx],
-                                                  worst_pos[idx],
-                                                  neighbors_worst_pos[idx])
-            velo_opti[idx] = velocity_function(dim, min_bound, max_bound,
+            velocitys[idx] = velocity_function(worst_array[idx],
+                                               dim, min_bound, max_bound,
                                                cog_val, soc_val,
-                                               worst_c_val, worst_s_val,
+                                               # worst_c_val,
+                                               worst_s_val,
                                                inertia,
-                                               pos_opti[idx], velo_opti[idx],
-                                               best_pos[idx],
-                                               neighbors_best_pos[idx],
-                                               worst_pos[idx],
-                                               neighbors_worst_pos[idx])
-            pos_opti[idx], velo_opti[idx] = move(pos_opti[idx],
-                                                 velo_opti[idx],
-                                                 min_bound, max_bound)
-            pos_worst[idx], velo_worst[idx] = move(pos_worst[idx],
-                                                   velo_opti[idx],
-                                                   min_bound, max_bound)
-            scores_opti[idx] = fitness_function(pos_opti[idx])
-            scores_worst[idx] = fitness_function(pos_worst[idx])
+                                               positions[idx], velocitys[idx],
+                                               best_positions[idx],
+                                               neighbors_best_positions[idx],
+                                               worst_positions[idx])
+            positions[idx], velocitys[idx] = move(positions[idx],
+                                                  velocitys[idx],
+                                                  min_bound, max_bound)
+            scores[idx] = fitness_function(positions[idx])
         for idx in range(n_particle):
-            if scores_opti[idx] <= best_scores[idx]:
-                best_scores[idx] = scores_opti[idx]
-                best_pos[idx] = pos_opti[idx]
-            if scores_worst[idx] >= worst_scores[idx]:
-                worst_scores[idx] = scores_worst[idx]
-                worst_pos[idx] = pos_worst[idx]
+            if scores[idx] <= best_scores[idx]:
+                best_scores[idx] = scores[idx]
+                best_positions[idx] = positions[idx]
+        worst_positions = np.array([
+            positions[neighbors[i]][scores[neighbors[i]].argmax()]
+            for i in range(n_particle)
+        ])
         tmp_min = min(best_scores)
         if tmp_min < best_score_swarm:
             best_score_swarm = tmp_min
-        tmp_max = max(worst_scores)
-        if tmp_max > worst_score_swarm:
-            worst_score_swarm = tmp_max
+            # (neighbors,
+            #  neighbors_best_scores,
+            #  neighbors_best_positions) = compute_value_swarm(n_particle,
+            #                                                  form_neighborhood,
+            #                                                  n_neighbor)
         (neighbors_best_scores,
-         neighbors_best_positions) = compute_neightbors(neighbors_opti,
-                                                        best_scores,
-                                                        best_pos)
-        (neighbors_worst_scores,
-         neighbors_worst_positions) = compute_neightbors(neighbors_worst,
-                                                         worst_scores,
-                                                         worst_pos,
-                                                         np.argmax)
+         neighbors_best_positions) = compute_neightbors(neighbors, best_scores,
+                                                        best_positions)
         i += 1
-    return (best_score_swarm, best_pos[best_scores.argmin()],
-            worst_score_swarm, worst_pos[worst_scores.argmax()])
+    return best_score_swarm, best_positions[best_scores.argmin()]
