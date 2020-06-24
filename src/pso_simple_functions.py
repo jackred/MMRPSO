@@ -175,10 +175,12 @@ def make_ring(nb):
     return lambda *args: form_neighborhood_ring(nb, *args)
 
 
-def form_neighborhood_dense(best_scores, best_positions):
+def form_neighborhood_dense(best_scores, best_positions, dimension):
     n_particle = len(best_scores)
     neighbors = np.full((n_particle, n_particle), range(n_particle), dtype=int)
     idx = best_scores.argmin()
-    neighbors_best_positions = np.full(n_particle, best_positions[idx])
+    neighbors_best_positions = np.full((n_particle, dimension),
+                                       best_positions[idx])
     neighbors_best_scores = np.full(n_particle, best_scores[idx])
     return (neighbors, neighbors_best_scores, neighbors_best_positions)
+
