@@ -21,7 +21,7 @@ SOCIAL_TRUST = 2
 # compute_neightbors
 # optimized iff result are nice
 def mmrpso(dim, fitness_function, min_bound, max_bound,
-           velocity_function, move,
+           velocity_fn, move,
            form_neighbor, init_particle, form_worst,
            max_iter, n_particle,
            cog_val=COGNITIVE_TRUST, soc_val=SOCIAL_TRUST,
@@ -48,25 +48,31 @@ def mmrpso(dim, fitness_function, min_bound, max_bound,
     best_score_swarm = min(best_scores)
     i = 0
     while i < max_iter and best_score_swarm > 1e-08:
+        worst_v = max(0, worst_s_val - (worst_s_val - 0) / (max_iter//2) * i)
+        # if i == max_iter // 2:
+        #     worst_array = np.array([False] * n_particle)
         print("%d / %d      " % (i, max_iter), end="\r")
-        if i % 200 == 0:
-            print(i, "-aaa>", "b", best_score_swarm, best_positions[best_scores.argmin()])
-        visualize.plot_data(positions, worst_array, min_bound, max_bound)
+        if i % 100 == 0:
+            print(worst_s_val, "<>", i, "->", "b", best_score_swarm, best_positions[best_scores.argmin()])
+            # visualize.plot_data(positions, worst_array, min_bound, max_bound)
         inertia = inertia_start - (inertia_start - inertia_end) / max_iter * i
         for idx in range(n_particle):
-            velocitys[idx] = velocity_function(worst_array[idx],
-                                               dim, min_bound, max_bound,
-                                               cog_val, soc_val,
-                                               # worst_c_val,
-                                               worst_s_val,
-                                               inertia,
-                                               positions[idx], velocitys[idx],
-                                               best_positions[idx],
-                                               neighbors_best_positions[idx],
-                                               worst_positions[idx])
-            positions[idx], velocitys[idx] = move(positions[idx],
-                                                  velocitys[idx],
-                                                  min_bound, max_bound)
+            velocitys[idx] = velocity_fn(worst_array[idx],
+                                         dim, cog_val, soc_val,
+                                         # worst_c_val,
+                                         worst_v,
+                                         inertia,
+                                         positions[idx], velocitys[idx],
+                                         best_positions[idx],
+                                         neighbors_best_positions[idx],
+                                         worst_positions[idx])
+            (positions[idx],
+             velocitys[idx]) = move(worst_array[idx],
+                                    positions[idx],
+                                    velocitys[idx],
+                                    min_bound, max_bound,
+                                    positions[scores[neighbors[idx]].argmin()],
+                                    np.max(positions[neighbors[idx]][worst_array[neighbors[idx]]], axis=0))
             scores[idx] = fitness_function(positions[idx])
         for idx in range(n_particle):
             if scores[idx] <= best_scores[idx]:

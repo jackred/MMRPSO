@@ -13,7 +13,7 @@ from math import sqrt, ceil, floor
 
 # PSO 2007
 
-def velocity_2007(dimension, min_bound, max_bound,
+def velocity_2007(dimension,
                   cognitive_trust, social_trust, inertia,
                   position, velocity, best_position, neighbors_best_position,
                   ignore_same=False):
@@ -40,18 +40,18 @@ def velocity_2007_ignore(*args):
 def init_velocity_2007(dimension, min_bound, max_bound, position):
     res = np.empty(dimension)
     for i in range(dimension):
-        res[i] = (np.random.uniform(min_bound, max_bound) - i) / 2
+        res[i] = (np.random.uniform(min_bound[i], max_bound[i]) - i) / 2
     return res
 
 
 def move_2007(position, velocity, min_bound, max_bound):
     tmp = position + velocity
     for i in range(len(tmp)):
-        if tmp[i] < min_bound:
-            position[i] = min_bound
+        if tmp[i] < min_bound[i]:
+            position[i] = min_bound[i]
             velocity[i] *= 0.0
-        elif tmp[i] > max_bound:
-            position[i] = max_bound
+        elif tmp[i] > max_bound[i]:
+            position[i] = max_bound[i]
             velocity[i] *= 0.0
         else:
             position[i] = tmp[i]
@@ -68,13 +68,13 @@ def gravity_center_equation(dimension, position,
     res = np.empty(dimension)
     for i in range(dimension):
         pi = position[i] \
-            + cognitive_trust * np.random.uniform(0, 1) \
+            + cognitive_trust \
             * (best_position[i] - position[i])
         if is_same_best_as_pos:
             res[i] = (position[i] + pi) / 2
         else:
             li = position[i] \
-                + social_trust * np.random.uniform(0, 1) \
+                + social_trust \
                 * (neighbors_best_position[i] - position[i])
             res[i] = (position[i] + pi + li) / 3
     return res
@@ -86,13 +86,21 @@ def dist(a, b):
 
 def generate_point_in_sphere(g, position, dimension):
     radius = dist(g, position)
-    U = pow(np.random.random(), 1/dimension)
-    x = np.random.uniform(-1, 1, size=dimension)
+    U = pow(np.random.uniform(), 1/dimension)
+    x = np.random.normal(0, 1, size=dimension)
     magnitude = sqrt(sum((x + 0.000000001) ** 2))
     return ((x * U) / magnitude) * radius + g
 
 
-def velocity_2011(dimension, min_bound, max_bound,
+def generate_point_in_sphere2(g, position, dimension):
+    radius = dist(g, position)
+    u = np.random.normal(0, 1, dimension)
+    x = (np.random.random())**(1.0/dimension)
+    magnitude = np.sum(u**2) ** (0.5)
+    return ((x * u) / magnitude) * radius + g
+
+
+def velocity_2011(dimension,
                   cognitive_trust, social_trust, inertia,
                   position, velocity, best_position, neighbors_best_position,
                   ignore_same=False):
@@ -114,18 +122,19 @@ def velocity_2011_ignore(*args):
 def init_velocity_2011(dimension, min_bound, max_bound, position):
     res = np.empty(dimension)
     for i in range(dimension):
-        res = np.random.uniform(min_bound-position[i], max_bound - position[i])
+        res = np.random.uniform(min_bound[i] - position[i],
+                                max_bound[i] - position[i])
     return res
 
 
 def move_2011(position, velocity, min_bound, max_bound):
     tmp = position + velocity
     for i in range(len(tmp)):
-        if tmp[i] < min_bound:
-            position[i] = min_bound
+        if tmp[i] < min_bound[i]:
+            position[i] = min_bound[i]
             velocity[i] *= -0.5
-        elif tmp[i] > max_bound:
-            position[i] = max_bound
+        elif tmp[i] > max_bound[i]:
+            position[i] = max_bound[i]
             velocity[i] *= -0.5
         else:
             position[i] = tmp[i]
@@ -137,7 +146,7 @@ def move_2011(position, velocity, min_bound, max_bound):
 def init_position(dimension, min_bound, max_bound):
     res = np.empty(dimension)
     for i in range(dimension):
-        res[i] = np.random.uniform(min_bound, max_bound)
+        res[i] = np.random.uniform(min_bound[i], max_bound[i])
     return res
 
 
@@ -157,9 +166,11 @@ def form_neighborhood_ring(n_neighbor, best_scores, best_positions, dimension):
     neighbors_best_positions = np.empty(shape=(n_particle, dimension))
     n_low = -floor(n_neighbor / 2)
     n_high = ceil(n_neighbor / 2)
+    print(n_low, n_high)
     for i in range(n_particle):
         idx = make_list((i+n_low) % n_particle, (i+n_high) % n_particle,
                         n_particle)
+        print(idx)
         neighbors[i] = np.array(idx)
         idx_min = best_scores[idx].argmin()
         neighbors_best_positions[i] = best_positions[idx][idx_min]

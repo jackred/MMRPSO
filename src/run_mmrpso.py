@@ -13,6 +13,7 @@ import mmrpso_functions
 import pso_simple_functions as pso_functions
 from pso_utility_functions import make_init_particle
 from benchmark import TestBenchmark
+import numpy as np
 
 
 def round8(a):
@@ -31,18 +32,19 @@ cluster_size = int(sys.argv[3])
 
 fitness_function = bench.lambda_function(fn_number)
 info = bench.get_info(fn_number)
-lower = info["lower"]
-upper = info["upper"]
+lower = np.full(dimension, info["lower"])
+upper = np.full(dimension, info["upper"])
 
 velocity_function = mmrpso_functions.velocity_both
 form_neighborhood = pso_functions.form_cluster_8
 init_particle = make_init_particle(pso_functions.init_position,
                                    pso_functions.init_velocity_2011)
-move = pso_functions.move_2011
+move = mmrpso_functions.move_both
 form_worst = mmrpso_functions.form_5_3
 
-max_iter = 10000*dimension
-n_particle = 80
+n_particle = 40
+max_iter = 10000*dimension // n_particle
+
 
 res = []
 print("function %d in dimension %d" % (fn_number, dimension))
@@ -63,7 +65,7 @@ for i in range(nb):
                                     max_iter, n_particle,
                                     inertia_start=0.7, inertia_end=0.7,
                                     # worst_c_val=0.0002,
-                                    worst_s_val=0.0)
+                                    worst_s_val=0.1)
     print("i->", i, ": best", round8(score), "at", position)
     res.append(round8(score))
 res.sort()

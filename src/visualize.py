@@ -14,7 +14,7 @@ def plot_data(data, is_worst, min_bound, max_bound):
             plt.scatter(data[i][0], data[i][1], c="#FF0000")
         else:
             plt.scatter(data[i][0], data[i][1], c="#00FF00")
-    plt.axis([min_bound, max_bound, min_bound, max_bound])
+    plt.axis([min_bound[0], max_bound[0], min_bound[1], max_bound[1]])
     plt.draw()
     plt.pause(0.1)
     plt.clf()

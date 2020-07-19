@@ -8,6 +8,7 @@
 
 import numpy as np
 from math import sqrt
+import pso_simple_functions
 
 
 def gravity_center_equation_w(dimension, position,
@@ -15,7 +16,7 @@ def gravity_center_equation_w(dimension, position,
     res = np.empty(dimension)
     for i in range(dimension):
         pi = position[i] \
-            + social_trust * np.random.uniform(0, 1) \
+            + social_trust \
             * (worst_position[i] - position[i])
         res[i] = (position[i] + pi) / 2
     return res
@@ -33,7 +34,7 @@ def generate_point_in_sphere(g, position, dimension):
     return ((x * U) / magnitude) * radius + g
 
 
-def velocity_w(dimension, min_bound, max_bound,
+def velocity_w(dimension,
                cognitive_trust, social_trust,
                # worst_c_val,
                worst_s_val,
@@ -57,19 +58,19 @@ def gravity_center_equation(dimension, pos, best_pos, neighbors_best_pos,
     res = np.empty(dimension)
     for i in range(dimension):
         pi = pos[i] \
-            + cognitive_trust * np.random.uniform(0, 1) \
+            + cognitive_trust \
             * (best_pos[i] - pos[i])
         li = pos[i] \
-            + social_trust * np.random.uniform(0, 1) \
+            + social_trust \
             * (neighbors_best_pos[i] - pos[i])
         wpi = worst_s_val * (pos[i]
-                             + social_trust * np.random.uniform(0, 1)
+                             + social_trust
                              * (worst_pos[i] - pos[i]))
         res[i] = (pos[i] + pi + li - wpi) / (3 + worst_s_val)
     return res
 
 
-def velocity(dimension, min_bound, max_bound,
+def velocity(dimension,
              cognitive_trust, social_trust,
              # worst_c_val,
              worst_s_val,
@@ -97,7 +98,7 @@ def velocity_both(isWorst, *args):
 
 
 def form_worst(cluster_size, n_particle):
-    res = np.empty(n_particle)
+    res = np.empty(n_particle, dtype=bool)
     n_good = round(cluster_size * 0.6)
     n_worst = cluster_size - n_good
     i = 0
@@ -113,3 +114,21 @@ def form_worst(cluster_size, n_particle):
 
 def form_5_3(n_particle):
     return form_worst(8, n_particle)
+
+
+def move_both(isWorst, position, velocity, min_bound, max_bound, best_position,
+              dist_neighbors_pos):
+    if isWorst:
+        dist_neighbors_pos = np.full(len(position), 10)
+        cluster_min_bound = [max(min_bound[i],
+                                 best_position[i] - dist_neighbors_pos[i])
+                             for i in range(len(min_bound))]
+        cluster_max_bound = [min(max_bound[i],
+                                 best_position[i] + dist_neighbors_pos[i])
+                             for i in range(len(max_bound))]
+        return pso_simple_functions.move_2011(position, velocity,
+                                              cluster_min_bound,
+                                              cluster_max_bound)
+    else:
+        return pso_simple_functions.move_2011(position, velocity,
+                                              min_bound, max_bound)

@@ -12,6 +12,7 @@ import pso_simple as pso
 import pso_simple_functions as pso_functions
 from pso_utility_functions import make_init_particle
 from benchmark import TestBenchmark
+import numpy as np
 
 
 def round8(a):
@@ -31,8 +32,8 @@ nb_neighbor = int(sys.argv[4])
 
 fitness_function = bench.lambda_function(fn_number)
 info = bench.get_info(fn_number)
-lower = info["lower"]
-upper = info["upper"]
+lower = np.full(dimension, info["lower"])
+upper = np.full(dimension, info["upper"])
 
 velocity_function = pso_functions.velocity_2007_ignore if ignore_same \
     else pso_functions.velocity_2007
@@ -41,8 +42,9 @@ init_particle = make_init_particle(pso_functions.init_position,
                                    pso_functions.init_velocity_2007)
 move = pso_functions.move_2007
 
-max_iter = 10000*dimension
 n_particle = 40
+max_iter = 10000*dimension // n_particle
+
 
 res = []
 print("function %d in dimension %d" % (fn_number, dimension))
