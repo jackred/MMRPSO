@@ -18,3 +18,12 @@ def plot_data(data, is_worst, min_bound, max_bound):
     plt.draw()
     plt.pause(0.1)
     plt.clf()
+
+
+def plot_data_norm(data, min_bound, max_bound):
+    for i in range(len(data)):
+        plt.scatter(data[i][0], data[i][1], c="#FF0000")
+    plt.axis([min_bound[0], max_bound[0], min_bound[1], max_bound[1]])
+    plt.draw()
+    plt.pause(0.5)
+    plt.clf()

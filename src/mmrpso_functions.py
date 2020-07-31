@@ -116,6 +116,10 @@ def form_5_3(n_particle):
     return form_worst(8, n_particle)
 
 
+def form_3_2(n_particle):
+    return form_worst(5, n_particle)
+
+
 def move_both(isWorst, position, velocity, min_bound, max_bound, best_position,
               dist_neighbors_pos):
     if isWorst:

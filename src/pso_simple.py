@@ -6,7 +6,7 @@
 
 # author: JackRed <jackred@tuta.io>
 from pso_utility_functions import compute_neightbors
-
+import visualize
 
 INERTIA_START = 0.9
 INERTIA_END = 0.4
@@ -36,8 +36,9 @@ def pso(dimension, fitness_function, min_bound, max_bound,
     i = 0
     while i < max_iter and best_score_swarm > 1e-08:
         print("%d / %d      " % (i, max_iter), end="\r")
-        if i % 200 == 0:
+        if i % 50 == 0:
             print(i, "->", "b", best_score_swarm, best_positions[best_scores.argmin()])
+            visualize.plot_data_norm(positions, min_bound, max_bound)
         inertia = inertia_start - (inertia_start - inertia_end) / max_iter * i
         for idx in range(n_particle):
             velocitys[idx] = velocity_function(dimension,

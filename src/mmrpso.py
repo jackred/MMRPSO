@@ -52,9 +52,9 @@ def mmrpso(dim, fitness_function, min_bound, max_bound,
         # if i == max_iter // 2:
         #     worst_array = np.array([False] * n_particle)
         print("%d / %d      " % (i, max_iter), end="\r")
-        if i % 100 == 0:
+        if i % 10 == 0:
             print(worst_s_val, "<>", i, "->", "b", best_score_swarm, best_positions[best_scores.argmin()])
-            # visualize.plot_data(positions, worst_array, min_bound, max_bound)
+            visualize.plot_data(positions, worst_array, min_bound, max_bound)
         inertia = inertia_start - (inertia_start - inertia_end) / max_iter * i
         for idx in range(n_particle):
             velocitys[idx] = velocity_fn(worst_array[idx],

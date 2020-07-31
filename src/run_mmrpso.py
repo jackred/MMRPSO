@@ -36,11 +36,17 @@ lower = np.full(dimension, info["lower"])
 upper = np.full(dimension, info["upper"])
 
 velocity_function = mmrpso_functions.velocity_both
-form_neighborhood = pso_functions.form_cluster_8
+if cluster_size == 8:
+    form_neighborhood = pso_functions.form_cluster_8
+elif cluster_size == 5:
+    form_neighborhood = pso_functions.form_cluster_5
+else:
+    exit("cluster size is 5 or 8")
+
 init_particle = make_init_particle(pso_functions.init_position,
                                    pso_functions.init_velocity_2011)
 move = mmrpso_functions.move_both
-form_worst = mmrpso_functions.form_5_3
+form_worst = mmrpso_functions.form_3_2
 
 n_particle = 40
 max_iter = 10000*dimension // n_particle
@@ -60,7 +66,8 @@ print("%s runs" % nb)
 for i in range(nb):
     score, position = mmrpso.mmrpso(dimension, fitness_function, lower, upper,
                                     velocity_function,
-                                    move, form_neighborhood, init_particle,
+                                    move,
+                                    form_neighborhood, init_particle,
                                     form_worst,
                                     max_iter, n_particle,
                                     inertia_start=0.7, inertia_end=0.7,

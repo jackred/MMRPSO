@@ -116,7 +116,7 @@ def velocity_2011(dimension,
 
 
 def velocity_2011_ignore(*args):
-    return velocity_2007(*args, ignore_same=True)
+    return velocity_2011(*args, ignore_same=True)
 
 
 def init_velocity_2011(dimension, min_bound, max_bound, position):
@@ -199,7 +199,7 @@ def form_neighborhood_dense(best_scores, best_positions, dimension):
 def form_neighborhood_cluster(cluster_size, best_scores, best_positions,
                               dimension):
     n_particle = len(best_scores)
-    neighbors = np.empty(shape=(n_particle, cluster_size), dtype=int)
+    neighbors = [0 for i in range(n_particle)]
     neighbors_best_scores = np.empty(n_particle)
     neighbors_best_positions = np.empty(shape=(n_particle, dimension))
     for i in range(n_particle // cluster_size):
@@ -210,11 +210,27 @@ def form_neighborhood_cluster(cluster_size, best_scores, best_positions,
                                             best_positions[tmp_range],
                                             dimension)
         tmp_n += (i * cluster_size)
-        neighbors[tmp_range] = tmp_n
+        neighbors[tmp_range.start:tmp_range.stop] = tmp_n
         neighbors_best_scores[tmp_range] = tmp_score
         neighbors_best_positions[tmp_range] = tmp_pos
     return (neighbors, neighbors_best_scores, neighbors_best_positions)
 
 
 def form_cluster_8(*args):
-    return form_neighborhood_cluster(8, *args)
+    res = form_neighborhood_cluster(8, *args)
+    n_cluster = len(args[1]) // 8
+    for i in range(n_cluster):
+        for j in range(n_cluster):
+            if j != i:
+                res[0][i*8+j] = np.append(res[0][i*8+j], j*8+i)
+    return res
+
+
+def form_cluster_5(*args):
+    res = form_neighborhood_cluster(5, *args)
+    n_cluster = len(args[1]) // 5
+    for i in range(n_cluster):
+        res[0][i*5] = np.append(res[0][i*5], [((i+1)*5) % len(args[1]), ((i-1)*5) % len(args[1])])
+    for i in res[0]:
+        print(i)
+    return res

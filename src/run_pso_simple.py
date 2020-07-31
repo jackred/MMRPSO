@@ -43,7 +43,7 @@ init_particle = make_init_particle(pso_functions.init_position,
 move = pso_functions.move_2011
 
 n_particle = 40
-max_iter = 10000*dimension // n_particle
+max_iter = 10000*dimension# // n_particle
 
 res = []
 print("function %d in dimension %d" % (fn_number, dimension))
