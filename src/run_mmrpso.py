@@ -38,15 +38,17 @@ upper = np.full(dimension, info["upper"])
 velocity_function = mmrpso_functions.velocity_both
 if cluster_size == 8:
     form_neighborhood = pso_functions.form_cluster_8
+    form_worst = mmrpso_functions.form_5_3
 elif cluster_size == 5:
     form_neighborhood = pso_functions.form_cluster_5
+    form_worst = mmrpso_functions.form_3_2
+
 else:
     exit("cluster size is 5 or 8")
 
 init_particle = make_init_particle(pso_functions.init_position,
                                    pso_functions.init_velocity_2011)
 move = mmrpso_functions.move_both
-form_worst = mmrpso_functions.form_3_2
 
 n_particle = 40
 max_iter = 10000*dimension // n_particle
@@ -71,7 +73,7 @@ for i in range(nb):
                                     form_worst,
                                     max_iter, n_particle,
                                     # worst_c_val=0.0002,
-                                    worst_s_val=0.01)
+                                    worst_s_val=0.1)
     print("i->", i, ": best", round8(score), "at", position)
     res.append(round8(score))
 res.sort()
