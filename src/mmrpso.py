@@ -10,8 +10,8 @@ import numpy as np
 from pso_utility_functions import compute_neightbors
 import visualize
 
-INERTIA_START = 0.9
-INERTIA_END = 0.4
+INERTIA_START = 0.721
+INERTIA_END = 0.721
 COGNITIVE_TRUST = 1.193
 SOCIAL_TRUST = 1.193
 
@@ -52,9 +52,10 @@ def mmrpso(dim, fitness_function, min_bound, max_bound,
         # if i == max_iter // 2:
         #     worst_array = np.array([False] * n_particle)
         print("%d / %d      " % (i, max_iter), end="\r")
-        if i % 100 == 0:
+        if i % (max_iter // 20) == 0:
             print(worst_s_val, "<>", i, "->", "b", best_score_swarm, best_positions[best_scores.argmin()])
-            visualize.plot_data(positions, worst_array, min_bound, max_bound)
+            # visualize.plot_data(positions, worst_array, min_bound, max_bound)
+            # print(velocitys)
         inertia = inertia_start - (inertia_start - inertia_end) / max_iter * i
         for idx in range(n_particle):
             velocitys[idx] = velocity_fn(worst_array[idx],

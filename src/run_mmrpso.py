@@ -70,9 +70,8 @@ for i in range(nb):
                                     form_neighborhood, init_particle,
                                     form_worst,
                                     max_iter, n_particle,
-                                    inertia_start=0.7, inertia_end=0.7,
                                     # worst_c_val=0.0002,
-                                    worst_s_val=0.1)
+                                    worst_s_val=0.01)
     print("i->", i, ": best", round8(score), "at", position)
     res.append(round8(score))
 res.sort()

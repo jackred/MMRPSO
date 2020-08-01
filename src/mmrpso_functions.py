@@ -16,7 +16,7 @@ def gravity_center_equation_w(dimension, position,
     res = np.empty(dimension)
     for i in range(dimension):
         pi = position[i] \
-            + social_trust \
+            + np.random.uniform(0, 1) * social_trust \
             * (worst_position[i] - position[i])
         res[i] = (position[i] + pi) / 2
     return res
@@ -58,13 +58,13 @@ def gravity_center_equation(dimension, pos, best_pos, neighbors_best_pos,
     res = np.empty(dimension)
     for i in range(dimension):
         pi = pos[i] \
-            + cognitive_trust \
+            + np.random.uniform(0, 1) * cognitive_trust \
             * (best_pos[i] - pos[i])
         li = pos[i] \
-            + social_trust \
+            + np.random.uniform(0, 1) * social_trust \
             * (neighbors_best_pos[i] - pos[i])
         wpi = worst_s_val * (pos[i]
-                             + social_trust
+                             + np.random.uniform(0, 1) * social_trust
                              * (worst_pos[i] - pos[i]))
         res[i] = (pos[i] + pi + li - wpi) / (3 + worst_s_val)
     return res
@@ -124,12 +124,12 @@ def move_both(isWorst, position, velocity, min_bound, max_bound, best_position,
               dist_neighbors_pos):
     if isWorst:
         dist_neighbors_pos = np.full(len(position), 10)
-        # cluster_min_bound = [max(min_bound[i],
-        #                          best_position[i] - dist_neighbors_pos[i])
-        #                      for i in range(len(min_bound))]
-        # cluster_max_bound = [min(max_bound[i],
-        #                          best_position[i] + dist_neighbors_pos[i])
-        #                      for i in range(len(max_bound))]
+        cluster_min_bound = [max(min_bound[i],
+                                 best_position[i] - dist_neighbors_pos[i])
+                             for i in range(len(min_bound))]
+        cluster_max_bound = [min(max_bound[i],
+                                 best_position[i] + dist_neighbors_pos[i])
+                             for i in range(len(max_bound))]
         
         return pso_simple_functions.move_2011(position, velocity,
                                               min_bound,
