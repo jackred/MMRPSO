@@ -68,13 +68,13 @@ def gravity_center_equation(dimension, position,
     res = np.empty(dimension)
     for i in range(dimension):
         pi = position[i] \
-            + cognitive_trust \
+            + np.random.uniform(0, 1) * cognitive_trust \
             * (best_position[i] - position[i])
         if is_same_best_as_pos:
             res[i] = (position[i] + pi) / 2
         else:
             li = position[i] \
-                + social_trust \
+                + np.random.uniform(0, 1) * social_trust \
                 * (neighbors_best_position[i] - position[i])
             res[i] = (position[i] + pi + li) / 3
     return res
@@ -122,8 +122,8 @@ def velocity_2011_ignore(*args):
 def init_velocity_2011(dimension, min_bound, max_bound, position):
     res = np.empty(dimension)
     for i in range(dimension):
-        res = np.random.uniform(min_bound[i] - position[i],
-                                max_bound[i] - position[i])
+        res[i] = np.random.uniform(min_bound[i] - position[i],
+                                   max_bound[i] - position[i])
     return res
 
 
@@ -170,7 +170,6 @@ def form_neighborhood_ring(n_neighbor, best_scores, best_positions, dimension):
     for i in range(n_particle):
         idx = make_list((i+n_low) % n_particle, (i+n_high) % n_particle,
                         n_particle)
-        print(idx)
         neighbors[i] = np.array(idx)
         idx_min = best_scores[idx].argmin()
         neighbors_best_positions[i] = best_positions[idx][idx_min]
@@ -231,6 +230,4 @@ def form_cluster_5(*args):
     n_cluster = len(args[1]) // 5
     for i in range(n_cluster):
         res[0][i*5] = np.append(res[0][i*5], [((i+1)*5) % len(args[1]), ((i-1)*5) % len(args[1])])
-    for i in res[0]:
-        print(i)
     return res

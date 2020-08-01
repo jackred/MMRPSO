@@ -43,7 +43,7 @@ init_particle = make_init_particle(pso_functions.init_position,
 move = pso_functions.move_2011
 
 n_particle = 40
-max_iter = 10000*dimension# // n_particle
+max_iter = 10000*dimension // n_particle
 
 res = []
 print("function %d in dimension %d" % (fn_number, dimension))
@@ -60,8 +60,7 @@ for i in range(nb):
     score, position = pso.pso(dimension, fitness_function, lower, upper,
                               velocity_function, move,
                               form_neighborhood, init_particle,
-                              max_iter, n_particle,
-                              inertia_start=0.7, inertia_end=0.7)
+                              max_iter, n_particle)
     print("i->", i, ": best", round8(score), "at", position)
     res.append(round8(score))
 res.sort()

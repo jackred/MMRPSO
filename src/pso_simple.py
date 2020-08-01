@@ -8,10 +8,10 @@
 from pso_utility_functions import compute_neightbors
 import visualize
 
-INERTIA_START = 0.9
-INERTIA_END = 0.4
-COGNITIVE_TRUST = 2
-SOCIAL_TRUST = 2
+INERTIA_START = 0.721
+INERTIA_END = 0.721
+COGNITIVE_TRUST = 1.193
+SOCIAL_TRUST = 1.193
 
 
 def pso(dimension, fitness_function, min_bound, max_bound,
@@ -36,7 +36,7 @@ def pso(dimension, fitness_function, min_bound, max_bound,
     i = 0
     while i < max_iter and best_score_swarm > 1e-08:
         print("%d / %d      " % (i, max_iter), end="\r")
-        if i % 50 == 0:
+        if i % 500 == 0:
             print(i, "->", "b", best_score_swarm, best_positions[best_scores.argmin()])
             visualize.plot_data_norm(positions, min_bound, max_bound)
         inertia = inertia_start - (inertia_start - inertia_end) / max_iter * i

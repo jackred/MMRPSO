@@ -12,8 +12,8 @@ import visualize
 
 INERTIA_START = 0.9
 INERTIA_END = 0.4
-COGNITIVE_TRUST = 2
-SOCIAL_TRUST = 2
+COGNITIVE_TRUST = 1.193
+SOCIAL_TRUST = 1.193
 
 
 # non optimized number of operation
@@ -52,7 +52,7 @@ def mmrpso(dim, fitness_function, min_bound, max_bound,
         # if i == max_iter // 2:
         #     worst_array = np.array([False] * n_particle)
         print("%d / %d      " % (i, max_iter), end="\r")
-        if i % 10 == 0:
+        if i % 100 == 0:
             print(worst_s_val, "<>", i, "->", "b", best_score_swarm, best_positions[best_scores.argmin()])
             visualize.plot_data(positions, worst_array, min_bound, max_bound)
         inertia = inertia_start - (inertia_start - inertia_end) / max_iter * i

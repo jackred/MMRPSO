@@ -124,15 +124,16 @@ def move_both(isWorst, position, velocity, min_bound, max_bound, best_position,
               dist_neighbors_pos):
     if isWorst:
         dist_neighbors_pos = np.full(len(position), 10)
-        cluster_min_bound = [max(min_bound[i],
-                                 best_position[i] - dist_neighbors_pos[i])
-                             for i in range(len(min_bound))]
-        cluster_max_bound = [min(max_bound[i],
-                                 best_position[i] + dist_neighbors_pos[i])
-                             for i in range(len(max_bound))]
+        # cluster_min_bound = [max(min_bound[i],
+        #                          best_position[i] - dist_neighbors_pos[i])
+        #                      for i in range(len(min_bound))]
+        # cluster_max_bound = [min(max_bound[i],
+        #                          best_position[i] + dist_neighbors_pos[i])
+        #                      for i in range(len(max_bound))]
+        
         return pso_simple_functions.move_2011(position, velocity,
-                                              cluster_min_bound,
-                                              cluster_max_bound)
+                                              min_bound,
+                                              max_bound)
     else:
         return pso_simple_functions.move_2011(position, velocity,
                                               min_bound, max_bound)
